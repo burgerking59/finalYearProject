@@ -1,4 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
+import Whiteboard from '../Components/Whiteboard';
+import TaskTracker from '@/Components/taskTracker';
+import FileSystem from '@/Components/FileSystem';
+
+
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
@@ -12,18 +17,20 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         document.getElementById('background')?.classList.add('!hidden');
     };
 
+    
+
     return (
         <>
         <Head title="Welcome" />
             <div>
                 <header>
-                    <nav className="-mx-3 flex flex-1 justify-end">
+                    <nav className="flex flex-1 justify-end">
                         {auth.user ? (
                             <Link
                                 href={route('dashboard')}
                                 className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                             >
-                                DashboardHello
+                                Dashboard
                             </Link>
                         ) : (
                             <>
@@ -31,7 +38,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     href={route('login')}
                                     className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                 >
-                                    Hello Log in
+                                    Log in
                                 </Link>
                                 <Link
                                     href={route('register')}
@@ -44,9 +51,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     </nav>
                 </header>
             </div>
-            <div>
-                <h1>This is a title</h1>
-            </div>
+            <Whiteboard>
+                
+            </Whiteboard>
+            <TaskTracker />
+            <FileSystem />
         </>   
 );
 }
