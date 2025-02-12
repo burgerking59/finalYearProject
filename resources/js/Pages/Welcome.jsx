@@ -5,7 +5,7 @@ import FileSystem from '@/Components/FileSystem';
 
 
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
+export default function Welcome({ auth, files}) {
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -16,7 +16,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             ?.classList.add('!flex-row');
         document.getElementById('background')?.classList.add('!hidden');
     };
-
+    
     
 
     return (
@@ -55,7 +55,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 
             </Whiteboard>
             <TaskTracker />
-            <FileSystem />
+            <FileSystem files={files} />
         </>   
 );
 }
