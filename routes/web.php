@@ -2,12 +2,18 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', function () {
+    return redirect()->route('projects.index');
+});
+
+Route::get('/projects/{id}', [HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -22,5 +28,8 @@ Route::middleware('auth')->group(function () {
 Route::post('/file', [FileController::class, 'store'])->name('file.store');
 Route::get('/file/{id}', [FileController::class, 'download'])->name('file.download');
 Route::delete('/file/{id}', [FileController::class, 'destroy'])->name('file.destroy');
+
+Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
+Route::post('/projects', [ProjectController::class, 'create'])->name('projects.create');
 
 require __DIR__.'/auth.php';

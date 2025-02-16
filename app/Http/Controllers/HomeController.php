@@ -13,11 +13,16 @@ use Illuminate\Support\Facades\Route;
 
 class HomeController extends Controller
 {
-    public function index() {
+    public function index($id) {
 
-        $project = Project::first();
-        $folder = Folder::where('project_id', $project->id)->first();
-        $files = File::where('folder_id', $folder->id)->get();
+        $project = Project::where('id', $id)->first();
+        if ($project) {
+            $folder = Folder::where('project_id', $project->id)->first();
+            $files = File::where('folder_id', $folder->id)->get();
+        } else {
+            $files = [];
+            
+        }
 
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
