@@ -1,52 +1,28 @@
 import { Button } from "@headlessui/react";
 import React, { useRef } from 'react';
 import { useState } from 'react';
+import { router } from '@inertiajs/react';
 import { Description, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 
-const Column = ({ title, column, taskData, setTaskData, addTask}) => {
+const Column = ({ title, column, taskData, stageId, addTask}) => {
     const [active, setActive] = useState(false);
+    const [values, setValues] = useState({
+      stageId: stageId,
+    })
 
-    const filteredTasks = taskData.filter((c) => c.column === column)
-
+    const filteredTasks = taskData.filter((c) => c.stage_id === stageId)
     
-
-    const handleDragStart = (e, card) => {
-        e.dataTransfer.setData("cardId", card.id);
+    const handleDragStart = (e, task) => {
+        e.dataTransfer.setData("taskId", task.id);
       };
     
       const handleDragEnd = (e) => {
-        const cardId = e.dataTransfer.getData("cardId");
-    
+        const taskId = e.dataTransfer.getData("taskId");
         setActive(false);
         clearHighlights();
-    
-        const indicators = getIndicators();
-        const { element } = getNearestIndicator(e, indicators);
-    
-        const before = element.dataset.before || "-1";
-    
-        if (before !== cardId) {
-          let copy = [...taskData];
-    
-          let cardToTransfer = copy.find((c) => c.id === cardId);
-          if (!cardToTransfer) return;
-          cardToTransfer = { ...cardToTransfer, column };
-    
-          copy = copy.filter((c) => c.id !== cardId);
-    
-          const moveToBack = before === "-1";
-    
-          if (moveToBack) {
-            copy.push(cardToTransfer);
-          } else {
-            const insertAtIndex = copy.findIndex((el) => el.id === before);
-            if (insertAtIndex === undefined) return;
-    
-            copy.splice(insertAtIndex, 0, cardToTransfer);
-          }
-    
-          setTaskData(copy);
-        }
+        
+        router.post(route('task.move',taskId), values)
+        
       };
     
       const handleDragOver = (e) => {
@@ -107,8 +83,6 @@ const Column = ({ title, column, taskData, setTaskData, addTask}) => {
         clearHighlights();
         setActive(false);
       };
-    
-
     return (
         <div>
           
@@ -119,7 +93,7 @@ const Column = ({ title, column, taskData, setTaskData, addTask}) => {
             onDragLeave={handleDragLeave}>
                 
             {filteredTasks.map((data) => {
-                return <Task key={data.id} {...data} handleDragStart={handleDragStart} taskData={taskData} setTaskData={setTaskData}/>
+                return <Task key={data.id} {...data} handleDragStart={handleDragStart} taskData={taskData}/>
             })}
             <DropIndicator beforeId={null} column={column} />
             <button id="addTask" type="button" onClick={addTask}>Add Task</button>
@@ -138,33 +112,34 @@ const DropIndicator = ({ beforeId, column }) => {
     );
   };
 
-const Task = ({title, description, id, column, handleDragStart, taskData, setTaskData}) => {
-  const [titl, setTitle] = useState(title)
-  const [desc, setDescription] = useState(description)
+const Task = ({taskName, description, id, stage_id, handleDragStart, taskData}) => {
+  const [values, setValues] = useState({
+    title: taskName,
+    description: description
+  })
+  function handleChange(e) {
+    const key = e.target.id;
+    const value = e.target.value
+    setValues(values => ({
+        ...values,
+        [key]: value,
+    }))
+  }
+
+function onSubmit(e) {
+    e.preventDefault()
+    router.post(route('task.edit',id), values)
+    setDisplayEdit(false)
+}
   
 
   const [displayEdit, setDisplayEdit] = useState(false)
   const editTask = () => {
     setDisplayEdit(true)
   }
-  const confirmTask = () => {
-    const newTaskData = taskData.map(task => {
-      if (task.id != id) {
-        return task;
-      } else {
-        return {title:titl,description:desc,id:id,column:column};
-      }
-    });
-    setTaskData(newTaskData)
-    setDisplayEdit(false)
-  }
-
+ 
   const deleteTask = () => {
-    setTaskData(
-      taskData.filter(a =>
-        a.id !== id
-      )
-    );
+    router.delete(route('task.destroy', id))
     setDisplayEdit(false)
   }
 
@@ -174,22 +149,21 @@ const Task = ({title, description, id, column, handleDragStart, taskData, setTas
 
     return (
         <>
-        { displayEdit && <TaskEdit 
-          title={titl}
-          setTitle={setTitle}
-          description={desc}
-          setDescription={setDescription}
-          confirmTask={confirmTask} 
-          deleteTask={deleteTask} 
-          closeTask={closeTask} /> }
-        <DropIndicator beforeId={id} column={column} />
+        { displayEdit && <div className="border fixed z-40 top-10">
+      <input type="text" id="title" value={values.title} onChange={handleChange}/>
+      <input type="text" id="description" value={values.description} onChange={handleChange}/>
+      <button type="button" onClick={deleteTask}>Delete</button>
+      <button type="button" onClick={onSubmit}>Confirm</button>
+      <button type="button" onClick={closeTask}>X</button>
+    </div> }
+        <DropIndicator beforeId={id} column={stage_id} />
         <div draggable="true"
         className="cursor-grab active:cursor-grabbing text-red-400"
         onDragStart={(e) => handleDragStart(e, {
-            title, description, id, column
+          taskName, description, id, stage_id
         })}>
             <button onClick={editTask}>
-            <p>{title}</p>
+            <p>{taskName}</p>
             <p>{description}</p>
             </button>
         </div>
@@ -197,107 +171,68 @@ const Task = ({title, description, id, column, handleDragStart, taskData, setTas
     )
 }
 
-const TaskEdit = ({title, setTitle, description, setDescription, confirmTask, deleteTask, closeTask}) => {
-  const editTitle = event => {
-    setTitle(event.target.value)
-  }
-  const editDescription = event => {
-    setDescription(event.target.value)
-  }
-  return (
-    <div className="border fixed z-40 top-10">
-      <input type="text" onChange={editTitle} value={title}/>
-      <input type="text" onChange={editDescription} value={description}/>
-      <button type="button" onClick={deleteTask}>Delete</button>
-      <button type="button" onClick={confirmTask}>Confirm</button>
-      <button type="button" onClick={closeTask}>X</button>
-    </div>
-  )
-}
 
-const TaskCreate = ({setDisplayCreate, setTaskData, taskData}) => {
-  const [title, setTitle] = useState("Enter Task Title")
-  const [description, setDescription] = useState("Add a description")
-  var newId
-  const editTitle = event => {
-    setTitle(event.target.value)
-  }
-  const editDescription = event => {
-    setDescription(event.target.value)
-  }
-  const confirmTask = () => {
-    if (taskData.length == 0) {
-      newId = "0"
-    } else {
-      var tempTaskData = taskData.sort(function (a,b) {
-        if (a.id < b.id) return -1;
-        if (a.id > b.id) return 1;
-        return 0;
-      });
-      newId = (parseInt(tempTaskData[tempTaskData.length - 1].id) + 1).toString()
-    }
-    var newTask = {title:title, description:description, id:newId, column:"backlog"}
-    setTaskData([...taskData, newTask])
-    setDisplayCreate(false)
-  }
+const TaskCreate = ({setDisplayCreate, stages}) => {
+
+  const [values, setValues] = useState({
+          title: "Enter Task Title",
+          description: "Add a description",
+          stageId: stages[0]['id']
+        })
+  
+        function handleChange(e) {
+          const key = e.target.id;
+          console.log(key)
+          const value = e.target.value
+          setValues(values => ({
+              ...values,
+              [key]: value,
+          }))
+        }
+  
+      function onSubmit(e) {
+          e.preventDefault()
+          router.post(route('task.store'), values)
+          setDisplayCreate(false)
+      }
+
   const closeTask = () => {
     setDisplayCreate(false)
   }
   return (
     <div className="border fixed z-40 top-10">
-      <input type="text" onChange={editTitle} value={title}/>
-      <input type="text" onChange={editDescription} value={description}/>
-      <button type="button" onClick={confirmTask}>Confirm</button>
+      <input type="text" id="title" value={values.title} onChange={handleChange}/>
+      <input type="text" id='description' value={values.description} onChange={handleChange}/>
+      <button type="button" onClick={onSubmit}>Confirm</button>
       <button type="button" onClick={closeTask}>X</button>
     </div>
   )
 }
 
-const TaskTracker = () => {
+const TaskTracker = ({stages, tasks}) => {
   const [displayCreate, setDisplayCreate] = useState(false)
-    const [taskData, setTaskData] = useState([
-        {title:"task1", description:"this is the first task", id:"2", column:"backlog"},
-        {title:"task2", description:"this is the second task", id:"1", column:"backlog"}])
-        
+
     const addTask = () => {
       setDisplayCreate(true)
     }
+    var c = -1
 
     return (
         <div  className="flex-container">
           { displayCreate && <TaskCreate 
           setDisplayCreate={setDisplayCreate}
-          setTaskData={setTaskData}
-          taskData={taskData}/> }
+          stages={stages}/> }
 
-            <Column
-        title="Backlog"
-        column="backlog"
-        taskData={taskData}
-        setTaskData={setTaskData}
-        addTask={addTask}
-      />
-      <Column
-        title="Sprint Backlog"
-        column="sprintBacklog"
-        taskData={taskData}
-        setTaskData={setTaskData}
-        addTask={addTask}
-      />
-      <Column
-        title="Doing"
-        column="doing"
-        taskData={taskData}
-        setTaskData={setTaskData}
-        addTask={addTask}
-      />
-      <Column
-        title="Completed"
-        column="completed"
-        taskData={taskData}
-        setTaskData={setTaskData}
-        addTask={addTask}
-      />
+        {stages.map((data) => {
+          c += 1
+              return <Column
+            title={data.stageName}
+            column={data.stageName}
+            taskData={tasks}
+            stageId={data.id}
+            addTask={addTask}
+          />
+          })}
             
         </div>
     );

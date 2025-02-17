@@ -5,7 +5,7 @@ import FileSystem from '@/Components/FileSystem';
 import NavBar from '@/Components/Navbar';
 
 
-export default function Welcome({ auth, files}) {
+export default function Welcome({ auth, files, stages, tasks}) {
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -17,7 +17,6 @@ export default function Welcome({ auth, files}) {
         document.getElementById('background')?.classList.add('!hidden');
     };
     
-    
 
     return (
         <>
@@ -28,7 +27,7 @@ export default function Welcome({ auth, files}) {
             <Whiteboard>
                 
             </Whiteboard>
-            <TaskTracker />
+            <TaskTracker stages={stages} tasks={tasks} />
             <FileSystem files={files} />
         </>   
 );

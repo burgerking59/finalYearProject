@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::post('/task', [TaskController::class, 'store'])->name('task.store');
+Route::post('/task/{id}', [TaskController::class, 'edit'])->name('task.edit');
+Route::post('/task/move/{id}', [TaskController::class, 'move'])->name('task.move');
+Route::delete('/task/{id}', [TaskController::class, 'destroy'])->name('task.destroy');
 
 Route::post('/file', [FileController::class, 'store'])->name('file.store');
 Route::get('/file/{id}', [FileController::class, 'download'])->name('file.download');

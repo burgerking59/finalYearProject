@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Project;
 use App\Models\Folder;
+use App\Models\Stage;
 use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
@@ -29,7 +30,13 @@ class ProjectController extends Controller
         $folder->project_id = $project->id;
         $folder->folderName = "folder";
         $folder->save();
-
+        $stages = ['Backlog', "Sprint Backlog", "Doing", "Completed"];
+        foreach ($stages as $stage) {
+            $stageDb = new Stage();
+            $stageDb->project_id = $project->id;
+            $stageDb->stageName = $stage;
+            $stageDb->save();
+        }
         return redirect()->back();
     }
 }
