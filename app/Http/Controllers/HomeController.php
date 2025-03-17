@@ -34,7 +34,7 @@ class HomeController extends Controller
             $files = [];
             
         }
-        return Inertia::render('Welcome', [
+        return Inertia::render('Project', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'files' => $files,

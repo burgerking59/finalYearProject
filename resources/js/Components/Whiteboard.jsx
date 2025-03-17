@@ -6,10 +6,7 @@ import { createPortal } from 'react-dom'
 import TaskTracker from '@/Components/taskTracker';
 
 var erase = false;
-const Board = ({
-    children,
-    ...props
-  }) => {
+const Board = ({displayTask, setDisplayTask, displayFile, setDisplayFile}) => {
 
     const canvasRef = useRef();
     
@@ -105,17 +102,39 @@ const Board = ({
             canvas.removeEventListener('mouseout', endDrawing);
         };
     }, []);
-    const check = () => {
+    const setErase = () => {
         erase = !erase
+        if (erase) {
+            setEraseClass('border-orange')
+        } else {
+            setEraseClass('border-black')
+        }
+    }
+    function showFiles() {
+        setDisplayFile(!displayFile)
+        if (displayFile) {
+            setFileClass('border-orange')
+        } else {
+            setFileClass('border-black')
+        }
+    }
+    
+    function showTasks() {
+        setDisplayTask(!displayTask)
     }
     const [contentRef, setContentRef] = useState(null)
 
-    const mountNode =
-        contentRef?.contentWindow?.document?.body
+    const [buttonClass, setButtonClass] = useState('p-2 m-1 border ')
+    const [eraseClass, setEraseClass] = useState('border-black')
+    const [taskClass, setTaskClass] = useState('border-black')
+    const [fileClass, setFileClass] = useState('border-black')
+    
     return (
         <div>
-            <div>
-                <button id="eraseBtn" className="z-10  text-red-950 bg-emerald-400" type="button" onClick={check}>Erase</button>
+            <div className='fixed right-0'>
+                <button onClick={setErase} id="eraseBtn" className={buttonClass + eraseClass} type="button" >Erase</button>
+                <button onClick={showTasks} className={buttonClass}>Task Tracker</button>
+                <button onClick={showFiles} className={buttonClass}>Files</button>
             </div>
             <canvas
                 ref={canvasRef}
