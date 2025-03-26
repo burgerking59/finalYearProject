@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { useEffect } from 'react';
 import { useState } from "react";
 import { router } from '@inertiajs/react';
@@ -13,7 +13,7 @@ const File = (data) => {
   return (
     <div>
       <h1>{data.data.fileName}</h1>
-      <a href={route('file.download', data.data.id)} class="rounded-lg bg-gray-200 px-4 py-1">
+      <a href={route('file.download', data.data.id)} className="rounded-lg bg-gray-200 px-4 py-1">
         <label>Download</label>
       </a>
       <button onClick={onDelete}>Delete</button>
@@ -25,28 +25,33 @@ const FileSystem = ({files}) => {
 
     const [file, setFile] = useState(null);
 
+    const [fileChanges, setFileChanges] = useState(0)
+
     const { data, setData, post, progress } = useForm({
         avatar: null,
       })
 
     function onSubmit (e) {
-        e.preventDefault();
+      e.preventDefault()
         post(route('file.store'))
     }
 
-    const handleFileChange = (e) => {
-        if (e.target.files) {
-          setFile(e.target.files[0]);
-        }
-      };
+    function fileChange(e) {
+      
+      setData('avatar', e.target.files[0])
+      setFileChanges(fileChanges + 1)
+    }
+
+    useLayoutEffect(() => {
+      document.getElementById('form').requestSubmit()
+  },[fileChanges])
     
     return (
-        <>
-        <div>
-            <h1>File System</h1>
-            <form onSubmit={onSubmit} method="POST">
-            <input type="file" onChange={e => setData('avatar', e.target.files[0])}/>
-            <input type="submit" />
+        <div className='border border-black w-full bg-white'>
+            <h1 className='m-4'>Files</h1>
+            <form id="form" onSubmit={onSubmit} method="POST">
+            <label htmlFor="fileInput">Upload File</label>
+            <input className='hidden' id='fileInput' type="file" onChange={e => fileChange(e)}/>
             </form>
             <div className='p-10 border'>
             {files.map((data) => {
@@ -54,7 +59,6 @@ const FileSystem = ({files}) => {
             })}
             </div>
         </div>
-        </>
     )
 }
 

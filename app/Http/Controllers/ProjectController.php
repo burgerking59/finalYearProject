@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
-    public function index() {
+    public function index() {        
         $projects = Project::where('user_id', Auth::id())->get();
         return Inertia::render('Projects', [
             'projects' => $projects
@@ -37,6 +37,6 @@ class ProjectController extends Controller
             $stageDb->stageName = $stage;
             $stageDb->save();
         }
-        return redirect()->back();
+        return redirect()->route('projects.index');
     }
 }

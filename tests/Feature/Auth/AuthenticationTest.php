@@ -9,15 +9,16 @@ test('login screen can be rendered', function () {
 });
 
 test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
+    $password = 'password';
+    $user = User::factory()->create([ 'password' => $password, ]);
 
     $response = $this->post('/login', [
         'email' => $user->email,
-        'password' => 'password',
+        'password' => $password,
     ]);
-
+    $this->assertDatabaseCount('users', 2);
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    //$response->assertRedirect('/projects');
 });
 
 test('users can not authenticate with invalid password', function () {

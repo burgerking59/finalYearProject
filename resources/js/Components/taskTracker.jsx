@@ -84,10 +84,10 @@ const Column = ({ title, column, taskData, stageId, addTask}) => {
         setActive(false);
       };
     return (
-        <div>
+        <div className="border border-black w-full grid justify-items-center">
           
-            <h1>{title}</h1>
-            <div
+            <h1 className="">{title}</h1>
+            <div className="w-4/5"
             onDragOver={handleDragOver}
             onDrop={handleDragEnd}
             onDragLeave={handleDragLeave}>
@@ -96,8 +96,9 @@ const Column = ({ title, column, taskData, stageId, addTask}) => {
                 return <Task key={data.id} {...data} handleDragStart={handleDragStart} taskData={taskData}/>
             })}
             <DropIndicator beforeId={null} column={column} />
-            <button id="addTask" type="button" onClick={addTask}>Add Task</button>
+            
             </div>
+            <button className="self-end border border-orange p-2 rounded-lg" id="addTask" type="button" onClick={addTask}>Add Task</button>
         </div>
     )
 }
@@ -107,8 +108,9 @@ const DropIndicator = ({ beforeId, column }) => {
       <div
         data-before={beforeId || "-1"}
         data-column={column}
-        className="my-0.5 h-0.5 w-full bg-violet-400 opacity-0"
-      />
+        className="my-0.5 h-0.5 w-full bg-orange opacity-0 z-1"
+      >
+      </div>
     );
   };
 
@@ -149,22 +151,26 @@ function onSubmit(e) {
 
     return (
         <>
-        { displayEdit && <div className="border fixed z-40 top-10">
-      <input type="text" id="title" value={values.title} onChange={handleChange}/>
-      <input type="text" id="description" value={values.description} onChange={handleChange}/>
-      <button type="button" onClick={deleteTask}>Delete</button>
-      <button type="button" onClick={onSubmit}>Confirm</button>
-      <button type="button" onClick={closeTask}>X</button>
+        { displayEdit && <div className="border-4 border-grey rounded-xl p-6 fixed inset-x-0 inset-y-0 h-3/4 w-1/2 m-auto bg-white">
+      <div className="flex flex-col h-full">
+        <input className="mt-4" type="text" id="title" value={values.title} onChange={handleChange}/>
+        <input className="mt-4" type="text" id="description" value={values.description} onChange={handleChange}/>
+        <div className="self-end justify-self-end mt-auto">
+          <button className="border border-black m-2 p-2" type="button" onClick={deleteTask}>Delete</button>
+          <button className="border border-orange m-2 p-2" type="button" onClick={onSubmit}>Confirm</button>
+        </div>
+      </div>
+      <button className="absolute top-0 right-0 m-2 text-orange font-bold" type="button" onClick={closeTask}>X</button>
     </div> }
         <DropIndicator beforeId={id} column={stage_id} />
-        <div draggable="true"
-        className="cursor-grab active:cursor-grabbing text-red-400"
+        <div 
+        draggable="true"
+        className="cursor-grab active:cursor-grabbing border border-black rounded-lg p-2 flex flex-col"
         onDragStart={(e) => handleDragStart(e, {
           taskName, description, id, stage_id
         })}>
             <button onClick={editTask}>
             <p>{taskName}</p>
-            <p>{description}</p>
             </button>
         </div>
         </>
@@ -200,12 +206,16 @@ const TaskCreate = ({setDisplayCreate, stages}) => {
     setDisplayCreate(false)
   }
   return (
-    <div className="border fixed z-40 top-10">
-      <input type="text" id="title" value={values.title} onChange={handleChange}/>
-      <input type="text" id='description' value={values.description} onChange={handleChange}/>
-      <button type="button" onClick={onSubmit}>Confirm</button>
-      <button type="button" onClick={closeTask}>X</button>
+  <div className="border-4 border-grey rounded-xl p-6 fixed inset-x-0 inset-y-0 h-3/4 w-1/2 m-auto bg-white">
+  <div className="flex flex-col h-full">
+    <input className="mt-4" type="text" id="title" value={values.title} onChange={handleChange}/>
+    <input className="mt-4" type="text" id="description" value={values.description} onChange={handleChange}/>
+    <div className="self-end justify-self-end mt-auto">
+      <button className="border border-orange m-2 p-2" type="button" onClick={onSubmit}>Confirm</button>
     </div>
+  </div>
+  <button className="absolute top-0 right-0 m-2 text-orange font-bold" type="button" onClick={closeTask}>X</button>
+  </div>
   )
 }
 
@@ -218,7 +228,7 @@ const TaskTracker = ({stages, tasks}) => {
     var c = -1
 
     return (
-        <div  className="flex-container">
+        <div className='border border-black flex-container w-full bg-white flex'>
           { displayCreate && <TaskCreate 
           setDisplayCreate={setDisplayCreate}
           stages={stages}/> }

@@ -112,7 +112,7 @@ const Board = ({displayTask, setDisplayTask, displayFile, setDisplayFile}) => {
     }
     function showFiles() {
         setDisplayFile(!displayFile)
-        if (displayFile) {
+        if (!displayFile) {
             setFileClass('border-orange')
         } else {
             setFileClass('border-black')
@@ -121,6 +121,11 @@ const Board = ({displayTask, setDisplayTask, displayFile, setDisplayFile}) => {
     
     function showTasks() {
         setDisplayTask(!displayTask)
+        if (!displayTask) {
+            setTaskClass('border-orange')
+        } else {
+            setTaskClass('border-black')
+        }
     }
     const [contentRef, setContentRef] = useState(null)
 
@@ -131,16 +136,16 @@ const Board = ({displayTask, setDisplayTask, displayFile, setDisplayFile}) => {
     
     return (
         <div>
-            <div className='fixed right-0'>
+            <div className='fixed right-0 z-10'>
                 <button onClick={setErase} id="eraseBtn" className={buttonClass + eraseClass} type="button" >Erase</button>
-                <button onClick={showTasks} className={buttonClass}>Task Tracker</button>
-                <button onClick={showFiles} className={buttonClass}>Files</button>
+                <button onClick={showTasks} className={buttonClass + taskClass}>Task Tracker</button>
+                <button onClick={showFiles} className={buttonClass + fileClass}>Files</button>
             </div>
             <canvas
                 ref={canvasRef}
                 width={windowSize[0]}
                 height={windowSize[1]}
-                style={{ backgroundColor: 'white', zIndex: '0' }}
+                style={{ backgroundColor: 'white', zIndex: '0', position: 'fixed' }}
                 
             />
             

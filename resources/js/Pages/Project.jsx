@@ -18,7 +18,7 @@ export default function Welcome({ auth, files, stages, tasks}) {
     }
 
     return (
-        <>
+        <div className='overflow-hidden overflow-y-hidden'>
         <Head title="Welcome" />
             <div>
                 <NavBar/>
@@ -27,8 +27,11 @@ export default function Welcome({ auth, files, stages, tasks}) {
             <Whiteboard displayTask={displayTask} setDisplayTask={setDisplayTask} displayFile={displayFile} setDisplayFile={setDisplayFile}>
                 
             </Whiteboard>
-            {displayTask && <TaskTracker stages={stages} tasks={tasks} />}
-            {displayFile && <FileSystem files={files} />}
-        </>   
+            <div className='flex absolute bottom-0 w-full z-10'>
+                {displayTask && <TaskTracker stages={stages} tasks={tasks} />}
+                
+                {displayFile && <FileSystem files={files} />}
+            </div>
+        </div>   
 );
 }

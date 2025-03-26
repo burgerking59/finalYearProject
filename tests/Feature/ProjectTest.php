@@ -11,3 +11,18 @@ test('projects page is displayed', function () {
 
         $response->assertOk();
 });
+
+test('project can be created', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->post(route('projects.create'), [
+            'projectName' => 'Test Project',
+            'sprintLength' => '2',
+        ])
+        ->assertRedirect(route('projects.index'));
+
+    $response
+        ->assertSessionHasNoErrors();
+});

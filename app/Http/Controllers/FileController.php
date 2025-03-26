@@ -21,6 +21,7 @@ class FileController extends Controller
     public function store(Request $request)
     {
         $file = $request->file('avatar');
+        if ($file != null) {
         $project = Project::first();
         $folder = Folder::where('project_id', $project->id)->first();
         $dbFile = new File();
@@ -29,6 +30,7 @@ class FileController extends Controller
         $dbFile->save();
         //Storage::disk('public')->put($file->getClientOriginalName(), $file);
         $file->storeAs('public', $file->getClientOriginalName());
+        }
         return redirect()->back();
     }
 
