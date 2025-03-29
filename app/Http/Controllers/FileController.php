@@ -40,7 +40,6 @@ class FileController extends Controller
         $fileName = $file->fileName;
         
         if (Storage::exists('public/'.$fileName)) {
-            //dd('check');
             return Storage::download('public/'.$fileName, $fileName);
         } else {
             return redirect()->back();
