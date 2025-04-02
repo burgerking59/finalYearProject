@@ -6,7 +6,7 @@ import NavBar from '@/Components/Navbar';
 import { useState } from 'react';
 
 
-export default function Welcome({ auth, files, stages, tasks}) {
+export default function Welcome({ auth, files, stages, tasks, project}) {
     const [displayFile, setDisplayFile] = useState(false)
     const [displayTask, setDisplayTask] = useState(false)
 
@@ -21,7 +21,7 @@ export default function Welcome({ auth, files, stages, tasks}) {
         <div className='overflow-hidden overflow-y-hidden'>
         <Head title="Welcome" />
             <div>
-                <NavBar/>
+                <NavBar title={project}/>
             </div>
             
             <Whiteboard displayTask={displayTask} setDisplayTask={setDisplayTask} displayFile={displayFile} setDisplayFile={setDisplayFile}>

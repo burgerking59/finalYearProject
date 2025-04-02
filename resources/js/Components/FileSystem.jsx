@@ -11,12 +11,16 @@ const File = (data) => {
   }
 
   return (
-    <div>
-      <h1>{data.data.fileName}</h1>
-      <a href={route('file.download', data.data.id)} className="rounded-lg bg-gray-200 px-4 py-1">
-        <label>Download</label>
+    <div className='flex justify-between border border-black'>
+      <h1 className='m-2'>{data.data.fileName}</h1>
+      <div className='flex'>
+      <a className='items-center justify-center flex m-2' href={route('file.download', data.data.id)}>
+        <img className='h-4' src={ `http://localhost:8000/images/downloadIcon.png` } alt="download icon"/>
       </a>
-      <button onClick={onDelete}>Delete</button>
+      <button className='items-center justify-center flex m-2' onClick={onDelete}>
+        <img className='h-4' src={ `http://localhost:8000/images/deleteIcon.png` } alt="download icon"/>
+      </button>
+      </div>
     </div>
   )
 }
@@ -47,17 +51,21 @@ const FileSystem = ({files}) => {
   },[fileChanges])
     
     return (
-        <div className='border border-black w-full bg-white'>
-            <h1 className='m-4'>Files</h1>
+        <div className='border border-black w-full bg-white flex flex-col'>
+            <h1 className='m-2'>Files</h1>
             <form id="form" onSubmit={onSubmit} method="POST">
-            <label htmlFor="fileInput">Upload File</label>
-            <input className='hidden' id='fileInput' type="file" onChange={e => fileChange(e)}/>
-            </form>
-            <div className='p-10 border'>
+            
+            
+            <div className='p-4 mb-4 border'>
             {files.map((data) => {
                 return <File data={data} />
             })}
             </div>
+            <div className='m-4'>
+            <label className='border border-orange p-2 rounded-xl' htmlFor="fileInput">Upload File</label>
+            <input className='hidden' id='fileInput' type="file" onChange={e => fileChange(e)}/>
+            </div>
+            </form>
         </div>
     )
 }

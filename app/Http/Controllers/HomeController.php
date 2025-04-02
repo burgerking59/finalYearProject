@@ -35,11 +35,10 @@ class HomeController extends Controller
             
         }
         return Inertia::render('Project', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
             'files' => $files,
             'stages' => $stages,
-            'tasks' => $tasks
+            'tasks' => $tasks,
+            'project' => $project['projectName'],
         ]);
     }
 }

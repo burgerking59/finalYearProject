@@ -30,10 +30,6 @@ export default function UpdateProfileInformation({
                 <h2 className="text-lg font-medium text-gray-900">
                     Profile Information
                 </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Update your account's profile information and email address.
-                </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
@@ -93,7 +89,7 @@ export default function UpdateProfileInformation({
                 )}
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <button disabled={processing} className='bg-white border border-orange p-2 px-4'>Save</button>
 
                     <Transition
                         show={recentlySuccessful}

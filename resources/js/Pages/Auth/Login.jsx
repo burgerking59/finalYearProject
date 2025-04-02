@@ -5,6 +5,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -21,8 +22,12 @@ export default function Login({ status, canResetPassword }) {
         });
     };
 
+    function register() {
+        router.get(route('register'))
+    }
+
     return (
-        <GuestLayout>
+        <div className='flex flex-col items-center mt-16'>
             <Head title="Log in" />
 
             {status && (
@@ -31,7 +36,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
             )}
 
-            <form onSubmit={submit}>
+            <form onSubmit={submit} className='m-16 flex flex-col items-center'>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -64,8 +69,15 @@ export default function Login({ status, canResetPassword }) {
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>
-
-                <div className="mt-4 block">
+                {canResetPassword && (
+                        <Link
+                            href={route('password.request')}
+                            className="rounded-md text-sm text-orange hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        >
+                            Forgot your password?
+                        </Link>
+                    )}
+                <div className="mt-2 block">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
@@ -79,22 +91,12 @@ export default function Login({ status, canResetPassword }) {
                         </span>
                     </label>
                 </div>
+                
+                    
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
+                <button disabled={processing} className='bg-white border border-orange p-2 px-4 mt-2 w-fit'>Log In</button>
             </form>
-        </GuestLayout>
+            <button disabled={processing} onClick={register} className='bg-white border border-black p-2 px-4 mt-4 w-fit'>Register</button>
+        </div>
     );
 }

@@ -28,16 +28,9 @@ export default function Projects({projects}) {
 
     return (
         <>
-            <header>
-                <nav className="flex justify-between bg-light_grey">
-                <button onClick={dropDown} className={dropDownClass}>Dropdown</button>
-                {displayMenu && <div id="myDropdown" className='flex flex-col absolute top-16 m-1 bg-white border border-black rounded-md'>
-                    <a href={route('projects.index')} className='p-3'>Projects</a>
-                    <a href={route('profile.edit')} className='p-3'>Account</a>
-                </div>}
+            <NavBar>
                 <button onClick={createProject} className='border border-orange bg-white m-2 p-2 px-6 rounded-2xl'>New Project</button>
-                </nav>
-            </header>
+            </NavBar>
             
             <div className='bg-light_grey flex flex-col m-4'>
             {projects.map((data) => {
